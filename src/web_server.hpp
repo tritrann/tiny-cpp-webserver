@@ -1,18 +1,21 @@
+
+#include <netinet/in.h>
+#include <unistd.h>
+#include <fstream>
 #include <iostream>
 #include <string>
+
 using namespace std;
 
-class SOCKET {
+class ServerSocket {
 private:
-    std::string ip_address;
-    int port;
+    std::string protocol;
+    std::string source_ip;
+    int source_port;
+    int server_fd;
 
 public:
-    SOCKET(std::string ip, int p) : ip_address(ip), port(p) {
-        std::cout << "Socket created." << std::endl;
-    }
-
-    ~SOCKET() {
-        std::cout << "Socket destroyed." << std::endl;
-    }
+    ServerSocket(std::string protocol, std::string ip, int p);
+    ~ServerSocket();
+    int acceptConnection(std::string &client_ip, int &client_port);
 };

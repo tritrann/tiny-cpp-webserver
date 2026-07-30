@@ -1,7 +1,4 @@
 #include "web_server.hpp"
-#include <iostream>
-#include <cstring>
-#include <unistd.h>
 
 ServerSocket::ServerSocket(std::string protocol, std::string ip, int p)
     : protocol(protocol), source_ip(ip), source_port(p) {

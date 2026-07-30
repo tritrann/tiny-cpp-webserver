@@ -1,7 +1,11 @@
 #pragma once
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstring>
 #include <string>
 #include <netinet/in.h>
+#include <unistd.h>
 
 class ClientSocket {
 private:
@@ -13,5 +17,5 @@ public:
     ~ClientSocket();
     ssize_t sendData(const std::string &data);
     ssize_t receiveData(std::string &data);
-    ssize_t parse_http_request(std::string &request, std::string &method, std::string &path, std::string &version);
+    std::string parse_http_request(std::string &request, std::string &method, std::string &path, std::string &version);
 };

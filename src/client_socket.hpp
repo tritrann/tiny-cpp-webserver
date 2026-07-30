@@ -9,13 +9,14 @@
 
 class ClientSocket {
 private:
-    int client_fd;
+    Socket client_socket;
     std::string client_ip;
     int client_port;
 public:
-    ClientSocket(int fd, const std::string &ip, int port);
+    ClientSocket(Socket socket, const std::string &ip, int port);
     ~ClientSocket();
-    ssize_t sendData(const std::string &data);
-    ssize_t receiveData(std::string &data);
-    std::string parse_http_request(std::string &request, std::string &method, std::string &path, std::string &version);
+    ssize_t send_data(const std::string &data);
+    ssize_t receive_data(std::string &data);
+    std::string parse_http_request(std::string &raw_request);
+    std::string read_file_from_disk(const std::string &file_path);
 };

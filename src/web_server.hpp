@@ -9,14 +9,11 @@ using namespace std;
 
 class ServerSocket {
 private:
-    std::string protocol;
-    std::string source_ip;
-    int source_port;
-    int server_fd;
+    Socket server_socket;
 
 public:
-    ServerSocket(std::string protocol, std::string ip, int p);
+    ServerSocket(int port);
     ~ServerSocket();
-    int acceptConnection(std::string &client_ip, int &client_port);
+    int accept_connection(std::string &client_ip, int &client_port);
 };
 

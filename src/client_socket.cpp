@@ -9,7 +9,7 @@ ClientSocket::~ClientSocket() {
     }
 }
 
-ClientSocket::receiveData(std::string &data) {
+ClientSocket::receive_data(std::string &data) {
     char buffer[2048];
     ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
     if (bytes_received < 0) {
@@ -21,7 +21,7 @@ ClientSocket::receiveData(std::string &data) {
     return bytes_received;
 }
 
-ClientSocket::sendData(const std::string &data) {
+ClientSocket::send_data(const std::string &data) {
     std::stringstream response_stream;
     response_stream << "HTTP/1.1 200 OK\r\n"
                     << "Content-Length: " << data.size() << "\r\n"
@@ -51,4 +51,15 @@ ClientSocket::parse_http_request(std::string &raw_request) {
         return "404 Not Found";
     }
     return path;
+}
+
+ClientSocket::read_file_from_disk(const std::string &file_path) {
+    std::ifstream file(file_path, std::ios::in | std::ios::binary);
+    if (!file.is_open()) {
+        return "<html><body><h1>404 Not Found</h1></body></html>";
+    }
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    file.close();
+    return buffer.str();
 }

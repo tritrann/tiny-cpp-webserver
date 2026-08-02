@@ -1,4 +1,10 @@
 #include "socket_utils.hpp"
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <iostream>
+#include <cstring>
+
 Socket::Socket(int fd) : fd(fd) {}
 
 Socket::~Socket() {
@@ -47,7 +53,7 @@ Socket Socket::create_socket(int port) {
 Socket Socket::accept_client(std::string &client_ip, int &client_port) {
     struct sockaddr_in client_address;
     socklen_t client_len = sizeof(client_address);
-    int client_fd = accept(fd, (struct sockaddr*)&client_address, &client_len);
+    int client_fd = accept(this->fd, (struct sockaddr*)&client_address, &client_len);
 
     if (client_fd < 0) {
         std::cerr << "Failed to accept connection" << std::endl;
@@ -63,55 +69,21 @@ Socket Socket::accept_client(std::string &client_ip, int &client_port) {
 }
 
 std::string Socket::receive_raw_data() {
-    char buffer[2048];
-    ssize_t bytes_received = recv(fd, buffer, sizeof(buffer) - 1, 0);
-    if (bytes_received < 0) {
+    char buffer[2048] = {0};
+    ssize_t bytes_received = recv(this->fd, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_received <= 0) {
         std::cerr << "Failed to receive data" << std::endl;
         return "";
     }
-    buffer[bytes_received] = '\0';
     return std::string(buffer);
 }
 
-std::string Socket::parse_http_request(const std::string &raw_request) {
-    std::istringstream request_stream(raw_request);
-    std::string method, path, version;
-    request_stream >> method >> path >> version;
-    std::cout << "Method: " << method << ", Path: " << path << ", Version: " << version << std::endl;
-    if (path == "/") {
-        return "public/index.html";
-    } else if (path == "/about") {
-        return "public/about.html";
-    } else {
-        return "404 Not Found";
-    }
-}
-
-std::string Socket::read_file_from_disk(const std::string &file_path) {
-    std::ifstream file(file_path, std::ios::in | std::ios::binary);
-    if (!file.is_open()) {
-        return "<html><body><h1>404 Not Found</h1></body></html>";
-    }
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return buffer.str();
-}
-
-std::string Socket::generate_http_response(const std::string &content) {
-    std::stringstream response_stream;
-    response_stream << "HTTP/1.1 200 OK\r\n"
-                    << "Content-Length: " << content.size() << "\r\n"
-                    << "Content-Type: text/html\r\n"
-                    << "\r\n"
-                    << content;
-    return response_stream.str();
-}
-
 std::string Socket::send_http_response(const std::string &response) {
-    ssize_t bytes_sent = send(fd, response.c_str(), response.size(), 0);
+    ssize_t bytes_sent = send(this->fd, response.c_str(), response.size(), 0);
     if (bytes_sent < 0) {
         std::cerr << "Failed to send data" << std::endl;
         return "";
     }
     return std::to_string(bytes_sent);
 }
+

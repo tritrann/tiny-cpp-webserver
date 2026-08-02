@@ -1,4 +1,4 @@
-
+#include "socket_utils.hpp"
 #include <netinet/in.h>
 #include <unistd.h>
 #include <iostream>
@@ -14,6 +14,6 @@ private:
 public:
     ServerSocket(int port);
     ~ServerSocket();
-    int accept_connection(std::string &client_ip, int &client_port);
+    Socket accept_connection(std::string &client_ip, int &client_port);
 };
 

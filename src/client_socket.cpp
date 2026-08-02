@@ -5,7 +5,8 @@ ClientSocket::ClientSocket(Socket socket, const std::string &ip, int port)
     : client_socket(socket), client_ip(ip), client_port(port) {}
 
 ClientSocket::~ClientSocket() {
-    close(client_socket.get_fd());
+    this->client_socket.close_socket();
+    std::cout << "Closed connection with " << client_ip << ":" << client_port << std::endl;
 }
 
 std::string ClientSocket::parse_http_request(const std::string &raw_request) {
@@ -27,7 +28,7 @@ std::string ClientSocket::parse_http_request(const std::string &raw_request) {
     else if (path == "/about") {
         path = "public/about.html"; 
     }
-    return "public/404.html";
+    return path;
 }
 
 std::string ClientSocket::read_file_from_disk(const std::string &file_path) {

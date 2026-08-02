@@ -20,4 +20,5 @@ public:
     Socket accept_client(std::string &client_ip, int &client_port);
     std::string receive_raw_data();
     std::string send_http_response(const std::string &response);
+    void close_socket();
 };

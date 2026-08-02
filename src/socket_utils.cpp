@@ -1,4 +1,5 @@
 #include "socket_utils.hpp"
+#include <cerrno>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -7,11 +8,7 @@
 
 Socket::Socket(int fd) : fd(fd) {}
 
-Socket::~Socket() {
-    if (fd >= 0) {
-        close(fd);
-    }
-}
+Socket::~Socket() {}
 
 int Socket::get_fd() const {
     return fd;
@@ -72,7 +69,7 @@ std::string Socket::receive_raw_data() {
     char buffer[2048] = {0};
     ssize_t bytes_received = recv(this->fd, buffer, sizeof(buffer) - 1, 0);
     if (bytes_received <= 0) {
-        std::cerr << "Failed to receive data" << std::endl;
+        std::cerr << "Lỗi recv thất bại! Mã lỗi: " << errno << " | Lý do: " << strerror(errno) << std::endl;       
         return "";
     }
     return std::string(buffer);
@@ -85,5 +82,12 @@ std::string Socket::send_http_response(const std::string &response) {
         return "";
     }
     return std::to_string(bytes_sent);
+}
+
+void Socket::close_socket() {
+    if (this->fd >= 0) {
+        close(this->fd);
+        this->fd = -1;
+    }
 }
 
